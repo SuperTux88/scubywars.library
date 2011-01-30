@@ -1,6 +1,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>de.tdng2010.game</groupId>
+		<artifactId>scubywars.parent</artifactId>
+		<version>0.5-SNAPSHOT</version>
+	</parent>
+
 	<groupId>de.tdng2010.game</groupId>
 	<artifactId>scubywars.library</artifactId>
 	<version>0.6-SNAPSHOT</version>
@@ -8,12 +14,12 @@
 
 	<name>libScubywars</name>
 	<url>http://scubywars.de</url>
+	<inceptionYear>2011</inceptionYear>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.scala-lang</groupId>
 			<artifactId>scala-library</artifactId>
-			<version>2.8.1</version>
 		</dependency>
 	</dependencies>
 
@@ -31,14 +37,6 @@
 		</repository>
 	</repositories>
 
-	<pluginRepositories>
-		<pluginRepository>
-			<id>coding4coffee</id>
-			<name>coding4coffee Maven2 Repository</name>
-			<url>http://nexus.coding4coffee.org/content/groups/public</url>
-		</pluginRepository>
-	</pluginRepositories>
-
 	<build>
 		<sourceDirectory>src/main/scala</sourceDirectory>
 		<!--<testSourceDirectory>src/test/scala</testSourceDirectory>-->
@@ -46,20 +44,6 @@
 			<plugin>
 				<groupId>org.scala-tools</groupId>
 				<artifactId>maven-scala-plugin</artifactId>
-				<executions>
-					<execution>
-						<goals>
-							<goal>add-source</goal>
-							<goal>compile</goal>
-							<goal>testCompile</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-release-plugin</artifactId>
-				<version>2.1</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -69,24 +53,4 @@
 		<developerConnection>scm:git:git@github.com:fbe/libScubywars.git</developerConnection>
 		<url>https://github.com/fbe/libScubywars</url>
 	</scm>
-
-	<distributionManagement>
-		<repository>
-			<id>c4c-releases</id>
-			<name>coding4coffee.org Release Repository</name>
-			<url>http://nexus.coding4coffee.org/content/repositories/releases
-			</url>
-		</repository>
-		<snapshotRepository>
-			<id>c4c-snapshots</id>
-			<name>coding4coffee.org Snapshots Repository</name>
-			<url>http://nexus.coding4coffee.org/content/repositories/snapshots
-			</url>
-			<uniqueVersion>false</uniqueVersion>
-		</snapshotRepository>
-	</distributionManagement>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 </project>
