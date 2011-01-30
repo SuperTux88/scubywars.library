@@ -3,14 +3,6 @@ package de.tdng2011.game.library
 import java.io.DataInputStream
 import util.StreamUtil
 
-/**
- * Created by IntelliJ IDEA.
- * User: benjamin
- * Date: 24.01.11
- * Time: 23:47
- * To change this template use File | Settings | File Templates.
- */
-
 class Player (stream : DataInputStream) {
   val buf = StreamUtil.read(stream, 32)
 
