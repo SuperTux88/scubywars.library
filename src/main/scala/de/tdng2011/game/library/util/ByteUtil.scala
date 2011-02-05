@@ -2,11 +2,12 @@ package de.tdng2011.game.library.util
 
 import java.nio.ByteBuffer
 import java.nio.ByteBuffer._
+import de.tdng2011.game.library.EntityTypes
 
 object ByteUtil {
 
-  def toByteArray(a : Any*) : Array[Byte] = {
-    var arraySize = 0
+  def toByteArray(typeId : EntityTypes.Value, a : Any*) : Array[Byte] = {
+    var arraySize = 6 // id + size
     for(x <- a){
       x match {
         case x : String => arraySize += x.length*2
@@ -14,6 +15,8 @@ object ByteUtil {
       }
     }
     val byteBuffer : ByteBuffer = allocate(arraySize)
+    byteBuffer.putShort(typeId.id.shortValue)
+    byteBuffer.position(6)
     for(x <- a){
       x match {
         case x : Float => byteBuffer.putFloat(x)
@@ -28,7 +31,11 @@ object ByteUtil {
         case barbraStreisand => println("error! unknown value, your byte array will not contain " + barbraStreisand)
       }
     }
-    val byteArray = new Array[Byte](byteBuffer.position)
+    arraySize = byteBuffer.position
+    byteBuffer.position(2)
+    byteBuffer.putInt(arraySize - 6)
+
+    val byteArray = new Array[Byte](arraySize)
     byteBuffer.position(0)
     byteBuffer.get(byteArray)
     byteArray

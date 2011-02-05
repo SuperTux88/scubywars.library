@@ -4,7 +4,8 @@ import java.io.DataInputStream
 import util.StreamUtil
 
 class Player (stream : DataInputStream) {
-  val buf = StreamUtil.read(stream, 32)
+  val size = StreamUtil.read(stream, 4).getInt
+  val buf = StreamUtil.read(stream, size)
 
   val publicId  : Long    = buf.getLong
   val pos       : Vec2    = Vec2(buf.getFloat, buf.getFloat)
