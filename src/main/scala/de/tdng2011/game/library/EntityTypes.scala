@@ -1,5 +1,5 @@
 package de.tdng2011.game.library
 
 object EntityTypes extends Enumeration {
-  val Player, Shot, PowerUp, World, Handshake, Action, Scoreboard = Value
+  val Player, Shot, PowerUp, World, Handshake, Action, Scoreboard, Score = Value
 }
