@@ -11,4 +11,5 @@ object EntityTypes extends Enumeration {
     Scoreboard,
     Score
   = Value
+
 }
