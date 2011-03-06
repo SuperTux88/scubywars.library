@@ -49,7 +49,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
 
   def processEntity(entity : Option[Any]) {
     entity match {
-      case x : Option[World] => processWorld(x.get)
+      case x : Some[World] => processWorld(x.get)
       case x => {}
     }
   }
