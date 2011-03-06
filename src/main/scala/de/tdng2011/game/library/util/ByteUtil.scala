@@ -11,7 +11,7 @@ object ByteUtil {
     for(x <- a){
       x match {
         case x : String => arraySize += x.length*2
-        case x : Map[Long, Int] => arraySize += 12 // Scoreboard
+        case x : Map[Long, Int] => arraySize += 12 * x.size // Scoreboard
         case x => arraySize += 8  // pessimistic size, works if all elements are 8 bytes
       }
     }
