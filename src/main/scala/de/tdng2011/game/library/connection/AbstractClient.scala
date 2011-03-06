@@ -34,10 +34,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
 
   def getEntity(iStream : DataInputStream) : Option[Any] = StreamUtil.read(iStream, 2).getShort match {
     case x if x == EntityTypes.World.id  => {
-      val size = StreamUtil.read(iStream, 4).getInt
-      val worldData = StreamUtil.read(iStream, size)
-      val count = worldData.getInt
-      Some(getWorld(iStream, count))
+      Some(World(iStream))
     }
     case x if x == EntityTypes.Scoreboard.id  => {
       Some(ScoreBoard(iStream))
@@ -58,19 +55,6 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
       }
       case x => {}
     }
-  }
-
-  def getWorld(iStream : DataInputStream, count : Int) = {
-    var players : IndexedSeq[Player] = IndexedSeq()
-    var shots : IndexedSeq[Shot] = IndexedSeq()
-    for (i <- 0 until count) {
-      StreamUtil.read(iStream, 2).getShort match {
-        case x if x == EntityTypes.Player.id => players = players :+ new Player(iStream)
-        case x if x == EntityTypes.Shot.id   => shots   = shots   :+ new Shot(iStream)
-        case x => println("barbra streisand! !player and !shot")
-      }
-    }
-    World(players, shots)
   }
 
   private def handshake(s : Socket) {

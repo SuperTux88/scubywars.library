@@ -4,8 +4,8 @@ import java.io.DataInputStream
 import util.{Vec2, StreamUtil}
 
 class Shot(stream : DataInputStream) {
-  val size = StreamUtil.read(stream, 4).getInt
-  val buf = StreamUtil.read(stream, size)
+  private val size = StreamUtil.read(stream, 4).getInt
+  private val buf = StreamUtil.read(stream, size)
 
   val publicId  : Long    = buf.getLong
   val pos       : Vec2    = Vec2(buf.getFloat, buf.getFloat)
