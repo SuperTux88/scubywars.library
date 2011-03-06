@@ -10,6 +10,7 @@ object EntityTypes extends Enumeration {
     Action,
     Scoreboard,
     PlayerJoined,
-    PlayerLeft
+    PlayerLeft,
+    PlayerName
   = Value
 }
