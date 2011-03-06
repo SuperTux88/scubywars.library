@@ -7,7 +7,9 @@ import de.tdng2011.game.library.{World, Shot, Player, ScoreBoard, EntityTypes}
 
 abstract class AbstractClient(hostname : String, relation : RelationTypes.Value) extends Runnable {
 
-  private var entityList = List[Any]()
+  private var world : World = null
+
+  private var scoreBoard : ScoreBoard = null
 
   private var publicId : Long = -1
 
@@ -20,7 +22,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
 
     while(true) {
       try {
-        processEntity(getEntity(iStream))
+        readEntity(iStream)
       } catch {
         case e => {
           e.printStackTrace
@@ -32,28 +34,21 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
     }
   }
 
-  def getEntity(iStream : DataInputStream) : Option[Any] = StreamUtil.read(iStream, 2).getShort match {
-    case x if x == EntityTypes.World.id  => {
-      Some(World(iStream))
-    }
-    case x if x == EntityTypes.Scoreboard.id  => {
-      Some(ScoreBoard(iStream))
-    }
-    case x => {
-      println("barbra streisand! (unknown bytes, wth?!) typeId: " + x)
-      val size = StreamUtil.read(iStream, 4).getInt
-      StreamUtil.read(iStream, size) //skip
-      None
-    }
-  }
-
-  def processEntity(entity : Option[Any]) {
-    entity match {
-      case x : Some[Any] => x.get match {
-        case s : World => processWorld(s)
-        case s : ScoreBoard => processScoreBoard(s)
+  def readEntity(iStream : DataInputStream) {
+    StreamUtil.read(iStream, 2).getShort match {
+      case x if x == EntityTypes.World.id  => {
+        world = World(iStream)
+        processWorld(world)
       }
-      case x => {}
+      case x if x == EntityTypes.Scoreboard.id  => {
+        scoreBoard = ScoreBoard(iStream)
+        processScoreBoard(scoreBoard)
+      }
+      case x => {
+        println("barbra streisand! (unknown bytes, wth?!) typeId: " + x)
+        val size = StreamUtil.read(iStream, 4).getInt
+        StreamUtil.read(iStream, size) //skip
+      }
     }
   }
 
@@ -109,9 +104,13 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
 
   def name = "Player"
 
+  def getWorld = world
+
+  def getScoreBoard = scoreBoard
+
   def processWorld(world : World) : Unit
 
-  def processScoreBoard(scoreBoard : ScoreBoard) : Unit
+  def processScoreBoard(scoreBoard : ScoreBoard) {}
 
   def action(turnLeft : Boolean, turnRight : Boolean, thrust : Boolean, fire : Boolean) {
     getConnection.getOutputStream.write(ByteUtil.toByteArray(EntityTypes.Action, turnLeft, turnRight, thrust, fire))
