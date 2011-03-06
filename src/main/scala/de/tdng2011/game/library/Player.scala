@@ -1,7 +1,7 @@
 package de.tdng2011.game.library
 
 import java.io.DataInputStream
-import util.StreamUtil
+import util.{Vec2, StreamUtil}
 
 class Player (stream : DataInputStream) {
   val size = StreamUtil.read(stream, 4).getInt

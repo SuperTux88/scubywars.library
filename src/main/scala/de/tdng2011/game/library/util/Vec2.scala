@@ -1,4 +1,4 @@
-package de.tdng2011.game.library
+package de.tdng2011.game.library.util
 
 import scala.math._
 

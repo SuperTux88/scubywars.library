@@ -11,6 +11,7 @@ object ByteUtil {
     for(x <- a){
       x match {
         case x : String => arraySize += x.length*2
+        case x : Map[Long, Int] => arraySize += 12 // Scoreboard
         case x => arraySize += 8  // pessimistic size, works if all elements are 8 bytes
       }
     }
@@ -28,6 +29,7 @@ object ByteUtil {
         case x : Byte => byteBuffer.put(x)
         case x : Boolean => byteBuffer.put(if(x) 1.byteValue else 0.byteValue)
         case x : String => x.toArray.map(byteBuffer.putChar(_))
+        case x : Map[Long, Int] => x.foreach{case (id, score) => {byteBuffer.putLong(id).putInt(score)}}
         case barbraStreisand => println("error! unknown value, your byte array will not contain " + barbraStreisand)
       }
     }
