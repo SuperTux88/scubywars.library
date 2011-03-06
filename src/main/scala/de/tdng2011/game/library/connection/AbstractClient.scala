@@ -3,7 +3,7 @@ package de.tdng2011.game.library.connection
 import java.net.Socket
 import java.io.DataInputStream
 import de.tdng2011.game.library.util.{ByteUtil, StreamUtil}
-import de.tdng2011.game.library.{World, Shot, Player, EntityTypes}
+import de.tdng2011.game.library.{World, Shot, Player, ScoreBoard, EntityTypes}
 
 abstract class AbstractClient(hostname : String, relation : RelationTypes.Value) extends Runnable {
 
@@ -39,6 +39,9 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
       val count = worldData.getInt
       Some(getWorld(iStream, count))
     }
+    case x if x == EntityTypes.Scoreboard.id  => {
+      Some(ScoreBoard(iStream))
+    }
     case x => {
       println("barbra streisand! (unknown bytes, wth?!) typeId: " + x)
       val size = StreamUtil.read(iStream, 4).getInt
@@ -49,7 +52,10 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
 
   def processEntity(entity : Option[Any]) {
     entity match {
-      case x : Some[World] => processWorld(x.get)
+      case x : Some[Any] => x.get match {
+        case s : World => processWorld(s)
+        case s : ScoreBoard => processScoreBoard(s)
+      }
       case x => {}
     }
   }
@@ -120,6 +126,8 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
   def name = "Player"
 
   def processWorld(world : World) : Unit
+
+  def processScoreBoard(scoreBoard : ScoreBoard) : Unit
 
   def action(turnLeft : Boolean, turnRight : Boolean, thrust : Boolean, fire : Boolean) {
     getConnection.getOutputStream.write(ByteUtil.toByteArray(EntityTypes.Action, turnLeft, turnRight, thrust, fire))
