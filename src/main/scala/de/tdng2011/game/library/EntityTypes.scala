@@ -8,7 +8,7 @@ object EntityTypes extends Enumeration {
     World,
     Handshake,
     Action,
-    Scoreboard,
+    ScoreBoard,
     PlayerJoined,
     PlayerLeft,
     PlayerName

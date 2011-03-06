@@ -8,8 +8,8 @@ import de.tdng2011.game.library.{World, Shot, Player, ScoreBoard, EntityTypes}
 abstract class AbstractClient(hostname : String, relation : RelationTypes.Value) extends Runnable {
 
   private var world : World = null
-
-  private var scoreBoard : ScoreBoard = null
+  private var scoreBoard : Map[Long, Int] = Map()
+  private var nameMap : Map[Long, String] = Map()
 
   private var publicId : Long = -1
 
@@ -40,9 +40,23 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
         world = World(iStream)
         processWorld(world)
       }
-      case x if x == EntityTypes.Scoreboard.id  => {
-        scoreBoard = ScoreBoard(iStream)
+      case x if x == EntityTypes.ScoreBoard.id  => {
+        scoreBoard = ScoreBoard.parseScoreBoard(iStream)
         processScoreBoard(scoreBoard)
+      }
+      case x if x == EntityTypes.PlayerJoined.id  => {
+        val player = Player.parsePlayerIdAndName(iStream)
+        addPlayer(player)
+      }
+      case x if x == EntityTypes.PlayerLeft.id  => {
+        val playerId = Player.parsePlayerId(iStream)
+        scoreBoard = scoreBoard - playerId
+        nameMap = nameMap - playerId
+        updatePlayers
+      }
+      case x if x == EntityTypes.PlayerName.id  => {
+        val player = Player.parsePlayerIdAndName(iStream)
+        addPlayer(player)
       }
       case x => {
         println("barbra streisand! (unknown bytes, wth?!) typeId: " + x)
@@ -50,6 +64,17 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
         StreamUtil.read(iStream, size) //skip
       }
     }
+  }
+
+  def addPlayer(player : (Long, String)) {
+    scoreBoard = scoreBoard + (player._1 -> 0)
+    nameMap = nameMap + (player._1 -> player._2)
+    updatePlayers
+  }
+
+  def updatePlayers {
+    processScoreBoard(scoreBoard)
+    processNames(nameMap)
   }
 
   private def handshake(s : Socket) {
@@ -105,12 +130,12 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
   def name = "Player"
 
   def getWorld = world
-
   def getScoreBoard = scoreBoard
+  def getNames = nameMap
 
   def processWorld(world : World) : Unit
-
-  def processScoreBoard(scoreBoard : ScoreBoard) {}
+  def processScoreBoard(scoreBoard : Map[Long, Int]) {}
+  def processNames(names : Map[Long, String]) {}
 
   def action(turnLeft : Boolean, turnRight : Boolean, thrust : Boolean, fire : Boolean) {
     getConnection.getOutputStream.write(ByteUtil.toByteArray(EntityTypes.Action, turnLeft, turnRight, thrust, fire))

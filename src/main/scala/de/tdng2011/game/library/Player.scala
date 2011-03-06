@@ -3,7 +3,7 @@ package de.tdng2011.game.library
 import java.io.DataInputStream
 import util.{Vec2, StreamUtil}
 
-class Player (stream : DataInputStream) {
+class Player(stream : DataInputStream) {
   private val size = StreamUtil.read(stream, 4).getInt
   private val buf = StreamUtil.read(stream, size)
 
@@ -20,4 +20,19 @@ class Player (stream : DataInputStream) {
   
   override def toString() = "Player(id: " + publicId + ", pos: " + pos + ", direction: " + direction + ", radius: " + radius + ", speed: " + speed + 
                               ", rotSpeed: " + rotSpeed + ", turnLeft: " + turnLeft + ", turnRight: " + turnRight + ", thrust: " + thrust + ", fire: " + fire + ")"
+}
+object Player {
+  def parsePlayerId(iStream : DataInputStream) = {
+    val size = StreamUtil.read(iStream, 4).getInt
+    val buf = StreamUtil.read(iStream, size)
+
+    buf.getLong
+  }
+
+  def parsePlayerIdAndName(iStream : DataInputStream) = {
+    val size = StreamUtil.read(iStream, 4).getInt
+    val buf = StreamUtil.read(iStream, 8)
+
+    (buf.getLong, StreamUtil.read(iStream, size-8).asCharBuffer.toString)
+  }
 }

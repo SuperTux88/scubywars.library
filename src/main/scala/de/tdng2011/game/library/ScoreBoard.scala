@@ -13,15 +13,18 @@ import java.io.DataInputStream
  * Time: 16:59
  */
 
-case class ScoreBoard (stream : DataInputStream) {
-  private val size = StreamUtil.read(stream, 4).getInt
-  private val buf = StreamUtil.read(stream, size)
+object ScoreBoard {
 
-  private var tmpScores = Map[Long, Int]()
+  def parseScoreBoard(iStream : DataInputStream) = {
+    val size = StreamUtil.read(iStream, 4).getInt
+    val buf = StreamUtil.read(iStream, size)
 
-  while(buf.hasRemaining) {
-    tmpScores = tmpScores + (buf.getLong -> buf.getInt)
+    var scores = Map[Long, Int]()
+
+    while(buf.hasRemaining) {
+      scores = scores + (buf.getLong -> buf.getInt)
+    }
+
+    scores
   }
-
-  val scores = tmpScores
 }
