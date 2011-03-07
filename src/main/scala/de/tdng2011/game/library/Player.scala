@@ -16,10 +16,7 @@ class Player(iStream : DataInputStream) extends Entity(iStream) {
 }
 object Player {
   def parsePlayerId(iStream : DataInputStream) = {
-    val size = StreamUtil.read(iStream, 4).getInt
-    val buf = StreamUtil.readBody(iStream)
-
-    buf.getLong
+    StreamUtil.readBody(iStream).getLong
   }
 
   def parsePlayerIdAndName(iStream : DataInputStream) = {
