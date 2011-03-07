@@ -118,6 +118,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
     } catch {
       case e => {
         logger.warn("connecting failed. retrying in 5 seconds");
+        logger.debug("connection failed exception: ", e)
         Thread.sleep(5000)
         connect()
       }
