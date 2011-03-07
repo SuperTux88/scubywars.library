@@ -16,8 +16,7 @@ import java.io.DataInputStream
 object ScoreBoard {
 
   def parseScoreBoard(iStream : DataInputStream) = {
-    val size = StreamUtil.read(iStream, 4).getInt
-    val buf = StreamUtil.read(iStream, size)
+    val buf = StreamUtil.readBody(iStream)
 
     var scores = Map[Long, Int]()
 

@@ -1,17 +1,10 @@
 package de.tdng2011.game.library
 
 import java.io.DataInputStream
-import util.{Vec2, StreamUtil}
+import util.StreamUtil
 
-class Player(stream : DataInputStream) {
-  private val size = StreamUtil.read(stream, 4).getInt
-  private val buf = StreamUtil.read(stream, size)
+class Player(iStream : DataInputStream) extends Entity(iStream) {
 
-  val publicId  : Long    = buf.getLong
-  val pos       : Vec2    = Vec2(buf.getFloat, buf.getFloat)
-  val direction : Float   = buf.getFloat
-  val radius    : Short   = buf.getShort
-  val speed     : Short   = buf.getShort
   val rotSpeed  : Float   = buf.getFloat
   val turnLeft  : Boolean = buf.get == 1
   val turnRight : Boolean = buf.get == 1
@@ -24,7 +17,7 @@ class Player(stream : DataInputStream) {
 object Player {
   def parsePlayerId(iStream : DataInputStream) = {
     val size = StreamUtil.read(iStream, 4).getInt
-    val buf = StreamUtil.read(iStream, size)
+    val buf = StreamUtil.readBody(iStream)
 
     buf.getLong
   }
