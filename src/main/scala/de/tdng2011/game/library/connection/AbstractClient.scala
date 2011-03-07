@@ -112,6 +112,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
   private def connect() : Socket = {
     try {
       val s = new Socket(hostname, 1337)
+      s.setTcpNoDelay(true)
       handshake(s)
       s
     } catch {
