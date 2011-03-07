@@ -2,10 +2,10 @@ package de.tdng2011.game.library.connection
 
 import java.net.Socket
 import java.io.DataInputStream
-import de.tdng2011.game.library.util.{ByteUtil, StreamUtil}
 import de.tdng2011.game.library.{World, Shot, Player, ScoreBoard, EntityTypes}
+import de.tdng2011.game.library.util.{ScubywarsLogger, ByteUtil, StreamUtil}
 
-abstract class AbstractClient(hostname : String, relation : RelationTypes.Value) extends Runnable {
+abstract class AbstractClient(hostname : String, relation : RelationTypes.Value) extends Runnable with ScubywarsLogger {
 
   private var world : World = null
   private var scoreBoard : Map[Long, Int] = Map()
@@ -25,8 +25,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
         readEntity(iStream)
       } catch {
         case e => {
-          e.printStackTrace
-          println("error while getting frame. trying to reconnect!");
+          logger.warn("error while getting frame. trying to reconnect!", e);
           connection = connect();
           iStream = new DataInputStream(connection.getInputStream);
         }
@@ -59,7 +58,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
         addPlayer(player)
       }
       case x => {
-        println("barbra streisand! (unknown bytes, wth?!) typeId: " + x)
+        logger.warn("unknown typeId received: " + x)
         val size = StreamUtil.read(iStream, 4).getInt
         StreamUtil.read(iStream, size) //skip
       }
@@ -82,7 +81,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
       case x if x == RelationTypes.Player     => handshakePlayer(s)
       case x if x == RelationTypes.Visualizer => handshakeVisualizer(s)
       case x => {
-        println("barbra streisand! (unknown relation, wth?!) typeId: " + x)
+        logger.warn("unknown relation: " + x)
         System exit -1
       }
     }
@@ -99,9 +98,10 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
     val response = StreamUtil.read(iStream, size)
     if (typeId == EntityTypes.Handshake.id) {
       val responseCode = response.get
-      println("response code: " + responseCode)
+      logger.info("connected! response code: " + responseCode)
       if (responseCode == 0)
         publicId = response.getLong
+      logger.info("public ID: " + responseCode)
     }
   }
 
@@ -117,7 +117,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
       s
     } catch {
       case e => {
-        println("connecting failed. retrying in 5 seconds");
+        logger.warn("connecting failed. retrying in 5 seconds");
         Thread.sleep(5000)
         connect()
       }
