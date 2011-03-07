@@ -5,7 +5,7 @@ import java.io.DataInputStream
 import de.tdng2011.game.library.{World, Shot, Player, ScoreBoard, EntityTypes}
 import de.tdng2011.game.library.util.{ScubywarsLogger, ByteUtil, StreamUtil}
 
-abstract class AbstractClient(hostname : String, relation : RelationTypes.Value) extends Runnable with ScubywarsLogger {
+abstract class AbstractClient(hostname : String, relation : RelationTypes.Value, autoconnect : Boolean = true) extends Runnable with ScubywarsLogger {
 
   private var world : World = null
   private var scoreBoard : Map[Long, Int] = Map()
@@ -13,21 +13,44 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
 
   private var publicId : Long = -1
 
-  private var connection : Socket = connect()
+  private var connected = false
 
-  new Thread(this).start
+  private var connection : Socket = null
+
+  if (autoconnect) {
+    connect
+  }
+
+  def connect {
+    if (connected) {
+      disconnect
+      Thread.sleep(500)
+    }
+    connected = true
+    connection = connectSocket()
+    new Thread(this).start
+  }
+
+  def disconnect {
+    connected = false
+    connection.close
+  }
 
   def run() {
     var iStream = new DataInputStream(connection.getInputStream)
 
-    while(true) {
+    while(connected) {
       try {
         readEntity(iStream)
       } catch {
         case e => {
-          logger.warn("error while getting frame. trying to reconnect!", e);
-          connection = connect();
-          iStream = new DataInputStream(connection.getInputStream);
+          if (connected) {
+            logger.warn("error while getting frame. trying to reconnect!", e);
+            connection = connectSocket();
+            iStream = new DataInputStream(connection.getInputStream);
+          } else {
+            logger.debug("Disconnected!")
+          }
         }
       }
     }
@@ -101,7 +124,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
       logger.info("connected! response code: " + responseCode)
       if (responseCode == 0)
         publicId = response.getLong
-      logger.info("public ID: " + responseCode)
+      logger.info("public ID: " + publicId)
     }
   }
 
@@ -109,7 +132,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
       s.getOutputStream.write(ByteUtil.toByteArray(EntityTypes.Handshake, RelationTypes.Visualizer.id.shortValue))
   }
 
-  private def connect() : Socket = {
+  private def connectSocket() : Socket = {
     try {
       val s = new Socket(hostname, 1337)
       s.setTcpNoDelay(true)
@@ -118,9 +141,8 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value)
     } catch {
       case e => {
         logger.warn("connecting failed. retrying in 5 seconds");
-        logger.debug("connection failed exception: ", e)
         Thread.sleep(5000)
-        connect()
+        connectSocket()
       }
     }
   }
