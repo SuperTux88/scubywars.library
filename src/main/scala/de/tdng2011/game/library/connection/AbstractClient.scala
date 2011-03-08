@@ -7,7 +7,7 @@ import de.tdng2011.game.library.util.{ScubywarsLogger, ByteUtil, StreamUtil}
 
 abstract class AbstractClient(hostname : String, relation : RelationTypes.Value, autoconnect : Boolean = true) extends Runnable with ScubywarsLogger {
 
-  private var world : World = null
+  private var world : World = _
   private var scoreBoard : Map[Long, Int] = Map()
   private var nameMap : Map[Long, String] = Map()
 
@@ -15,7 +15,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value,
 
   private var connected = false
 
-  private var connection : Socket = null
+  private var connection : Socket = _
 
   if (autoconnect) {
     connect
