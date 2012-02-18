@@ -43,7 +43,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value,
       try {
         readEntity(iStream)
       } catch {
-        case e : IOException | EOFException => {
+        case e @ (_ : IOException | _ : EOFException) => {
           if (connected) {
             logger.warn("error while getting frame. trying to reconnect!", e)
             disconnect
