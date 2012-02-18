@@ -7,7 +7,6 @@
 		<version>1.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>de.tdng2010.game</groupId>
 	<artifactId>scubywars.library</artifactId>
 	<version>1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
@@ -53,8 +52,8 @@
 	</build>
 
 	<scm>
-		<connection>scm:git:git://github.com/fbe/libScubywars.git</connection>
-		<developerConnection>scm:git:git@github.com:fbe/libScubywars.git</developerConnection>
-		<url>https://github.com/fbe/libScubywars</url>
+		<connection>scm:git:git://github.com/SuperTux88/scubywars.library.git</connection>
+		<developerConnection>scm:git:git@github.com:SuperTux88/scubywars.library.git</developerConnection>
+		<url>https://github.com/SuperTux88/scubywars.library</url>
 	</scm>
 </project>
