@@ -157,6 +157,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value,
   def getScoreBoard = scoreBoard
   def getNames = nameMap
 
+  @throws(classOf[Exception])
   def processWorld(world : World) : Unit
   def processScoreBoard(scoreBoard : Map[Long, Int]) {}
   def processNames(names : Map[Long, String]) {}
