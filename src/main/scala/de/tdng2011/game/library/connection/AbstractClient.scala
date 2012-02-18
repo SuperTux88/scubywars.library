@@ -45,9 +45,10 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value,
       } catch {
         case e => {
           if (connected) {
-            logger.warn("error while getting frame. trying to reconnect!", e);
-            connection = connectSocket();
-            iStream = new DataInputStream(connection.getInputStream);
+            logger.warn("error while getting frame. trying to reconnect!", e)
+            disconnect
+            connection = connectSocket()
+            iStream = new DataInputStream(connection.getInputStream)
           } else {
             logger.debug("Disconnected!")
           }
