@@ -1,9 +1,9 @@
 package de.tdng2011.game.library.connection
 
 import java.net.Socket
-import java.io.DataInputStream
 import de.tdng2011.game.library.{World, Shot, Player, ScoreBoard, EntityTypes}
 import de.tdng2011.game.library.util.{ScubywarsLogger, ByteUtil, StreamUtil}
+import java.io.{EOFException, IOException, DataInputStream}
 
 abstract class AbstractClient(hostname : String, relation : RelationTypes.Value, autoconnect : Boolean = true) extends Runnable with ScubywarsLogger {
 
@@ -43,7 +43,7 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value,
       try {
         readEntity(iStream)
       } catch {
-        case e => {
+        case e : IOException | EOFException => {
           if (connected) {
             logger.warn("error while getting frame. trying to reconnect!", e)
             disconnect
@@ -52,6 +52,9 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value,
           } else {
             logger.debug("Disconnected!")
           }
+        }
+        case e => {
+          logger.error("exception while process entity", e)
         }
       }
     }
