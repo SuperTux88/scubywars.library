@@ -107,6 +107,8 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value,
     relation match {
       case x if x == RelationTypes.Player     => handshakePlayer(s)
       case x if x == RelationTypes.Visualizer => handshakeVisualizer(s)
+      case x if x == RelationTypes.PlayerNG     => handshakePlayer(s, true)
+      case x if x == RelationTypes.VisualizerNG => handshakeVisualizer(s, true)
       case x => {
         logger.warn("unknown relation: " + x)
         System exit -1
@@ -114,9 +116,12 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value,
     }
   }
 
-  private def handshakePlayer(s : Socket) {
+  private def handshakePlayer(s : Socket, ng : Boolean = false) {
     val iStream = new DataInputStream(s.getInputStream)
-    s.getOutputStream.write(ByteUtil.toByteArray(EntityTypes.Handshake, RelationTypes.Player.id.shortValue, name))
+    
+    val relationType = if(ng) RelationTypes.PlayerNG.id.shortValue else RelationTypes.Player.id.shortValue
+    
+    s.getOutputStream.write(ByteUtil.toByteArray(EntityTypes.Handshake, relationType, name))
 
     val buf    = StreamUtil.read(iStream, 6)
     val typeId = buf.getShort
@@ -132,8 +137,9 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value,
     }
   }
 
-  private def handshakeVisualizer(s : Socket) {
-      s.getOutputStream.write(ByteUtil.toByteArray(EntityTypes.Handshake, RelationTypes.Visualizer.id.shortValue))
+  private def handshakeVisualizer(s : Socket,  ng : Boolean = false) {
+    val relationType = if(ng) RelationTypes.VisualizerNG.id.shortValue else RelationTypes.Visualizer.id.shortValue
+    s.getOutputStream.write(ByteUtil.toByteArray(EntityTypes.Handshake, relationType))
   }
 
   private def connectSocket() : Socket = {
