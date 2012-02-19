@@ -20,6 +20,7 @@ object ByteUtil extends ScubywarsLogger {
     byteBuffer.position(6)
     for(x <- a){
       x match {
+        case x : Vec2 =>  { byteBuffer.putFloat(x.x); byteBuffer.putFloat(x.y) }
         case x : Float => byteBuffer.putFloat(x)
         case x : Double => byteBuffer.putDouble(x)
         case x : Long => byteBuffer.putLong(x)
