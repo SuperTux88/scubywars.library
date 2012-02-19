@@ -84,6 +84,21 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value,
         val player = Player.parsePlayerIdAndName(iStream)
         addPlayer(player)
       }
+      
+      // NG 
+      case x if x == EntityTypes.ShotSpawnedEvent.id => {
+    	  shotSpawnedEvent
+    	  val size = StreamUtil.read(iStream, 4).getInt
+    	  StreamUtil.read(iStream, size) //skip
+      }
+      
+      case x if x == EntityTypes.PlayerKilledEvent.id => {
+    	  playerKilledEvent
+    	  val size = StreamUtil.read(iStream, 4).getInt
+    	  StreamUtil.read(iStream, size) //skip
+      }
+      
+      
       case x => {
         logger.warn("unknown typeId received: " + x)
         val size = StreamUtil.read(iStream, 4).getInt
@@ -96,6 +111,14 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value,
     scoreBoard = scoreBoard + (player._1 -> 0)
     nameMap = nameMap + (player._1 -> player._2)
     updatePlayers
+  }
+  
+  def shotSpawnedEvent() {
+    logger.debug("Shot spawned! // TODO read bytes")
+  }
+  
+  def playerKilledEvent() {
+    logger.debug("Player killed! // TODO read bytes!")
   }
 
   def updatePlayers {
