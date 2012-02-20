@@ -90,18 +90,43 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value,
     	  shotSpawnedEvent
     	  val size = StreamUtil.read(iStream, 4).getInt
     	  StreamUtil.read(iStream, size) //skip
+    	  /*
+			Attribute	Bytes	Type
+			publicId	8	Long
+			parentId	8	Long
+			pos.x	4	Float
+			pos.y	4	Float
+    	   */
       }
       
       case x if x == EntityTypes.PlayerKilledEvent.id => {
     	  playerKilledEvent
     	  val size = StreamUtil.read(iStream, 4).getInt
     	  StreamUtil.read(iStream, size) //skip
+    	  /*
+    	   * victimPublicId	8	Long
+			shotPublicId	8	Long
+			killerPublicId	8	Long
+			shotPosition.x	4	Float
+			shotPosition.y	4	Float
+			victimPosition.x	4	Float
+			victimPosition.y	4	Float
+    	   */
       }
       
       case x if x == EntityTypes.PlayerCollisionEvent.id => {
     	  playerCollisionEvent
     	  val size = StreamUtil.read(iStream, 4).getInt
     	  StreamUtil.read(iStream, size) //skip
+    	  /*
+    	   * 	Attribute	Bytes	Type
+				player1PublicId	8	Long
+				player2PublicId	8	Long
+				player1Position.x	4	Float
+				player1Position.y	4	Float
+				player2Position.x	4	Float
+				player2Position.y	4	Float
+    	   */
       }
       
       case x => {
