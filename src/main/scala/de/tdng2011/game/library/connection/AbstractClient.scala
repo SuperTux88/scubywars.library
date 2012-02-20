@@ -129,6 +129,12 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value,
     	   */
       }
       
+      case x if x == EntityTypes.PlayerSpawnedEvent.id => {
+    	  playerSpawnedEvent
+    	  val size = StreamUtil.read(iStream, 4).getInt
+    	  StreamUtil.read(iStream, size) //skip
+      }
+      
       case x => {
         logger.warn("unknown typeId received: " + x)
         val size = StreamUtil.read(iStream, 4).getInt
@@ -153,6 +159,10 @@ abstract class AbstractClient(hostname : String, relation : RelationTypes.Value,
   
   def playerCollisionEvent(){
     logger.debug("Player collision! // TODO read bytes!")
+  }
+  
+  def playerSpawnedEvent() {
+    logger.debug("Player spawned event! // TODO read bytes!")
   }
 
   def updatePlayers {
